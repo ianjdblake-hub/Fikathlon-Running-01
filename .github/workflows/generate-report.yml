@@ -1,0 +1,53 @@
+name: Generate Training Report
+
+on:
+  push:
+    paths:
+      - 'Activities.csv'
+  workflow_dispatch:
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install pandas
+    
+    - name: Determine week number
+      id: week
+      run: |
+        START_DATE="2025-11-09"
+        CURRENT_DATE=$(date +%Y-%m-%d)
+        DAYS_DIFF=$(( ( $(date -d "$CURRENT_DATE" +%s) - $(date -d "$START_DATE" +%s) ) / 86400 ))
+        WEEK_NUM=$(( ($DAYS_DIFF / 7) + 1 ))
+        if [ $WEEK_NUM -lt 1 ]; then
+          WEEK_NUM=1
+        elif [ $WEEK_NUM -gt 22 ]; then
+          WEEK_NUM=22
+        fi
+        echo "week=$WEEK_NUM" >> $GITHUB_OUTPUT
+        echo "Current week number: $WEEK_NUM"
+    
+    - name: Generate HTML report
+      run: |
+        python3 training_analyzer_html.py Activities.csv ${{ steps.week.outputs.week }} --output docs/index.html
+        REPORT_DATE=$(date +%Y-%m-%d)
+        python3 training_analyzer_html.py Activities.csv ${{ steps.week.outputs.week }} --output docs/report_week${{ steps.week.outputs.week }}_${REPORT_DATE}.html
+    
+    - name: Commit and push reports
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add docs/
+        git diff --quiet && git diff --staged --quiet || git commit -m "Generated training report for week ${{ steps.week.outputs.week }}"
+        git push
