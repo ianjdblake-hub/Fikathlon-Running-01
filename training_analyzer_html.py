@@ -89,6 +89,85 @@ class HTMLTrainingAnalyzer:
             'elevations': elevations
         }
     
+    def _get_fika_of_week(self, week_num):
+        """Get fika recommendation for the week"""
+        fikas = {
+            1: {
+                'name': 'Swedish Cardamom Buns (Kardemummabullar)',
+                'url': 'https://www.bbc.co.uk/food/recipes/swedish_cardamom_buns_12727',
+                'source': 'BBC Good Food',
+                'fact': 'Cardamom is Sweden's favorite spice! Swedes use more cardamom per capita than any other country. It's in everything from kanelbullar to Christmas cookies.',
+                'why': 'These buns use wholemeal flour for extra fiber and are naturally sweetened. The cardamom also aids digestion - perfect post-run treat!'
+            },
+            2: {
+                'name': 'Swedish Cinnamon Buns (Kanelbullar)',
+                'url': 'https://www.bbc.co.uk/food/recipes/swedish_cinnamon_buns_12726',
+                'source': 'BBC Good Food',
+                'fact': 'October 4th is "Kanelbullens Dag" (Cinnamon Bun Day) in Sweden! Swedes consume an average of 316 cinnamon buns per person per year.',
+                'why': 'A Swedish classic! Made with milk and eggs for protein. Enjoy one after your long run - you've earned it!'
+            },
+            3: {
+                'name': 'Oat & Raisin Cookies',
+                'url': 'https://www.bbcgoodfood.com/recipes/oat-raisin-cookies',
+                'source': 'BBC Good Food',
+                'fact': 'Oats are a runner's best friend - they provide slow-release energy and contain beta-glucans which help reduce cholesterol.',
+                'why': 'Packed with oats for sustained energy, raisins for natural sweetness and iron. Great pre-run snack too!'
+            },
+            4: {
+                'name': 'Banana Bread',
+                'url': 'https://www.bbcgoodfood.com/recipes/brilliant-banana-loaf',
+                'source': 'BBC Good Food',
+                'fact': 'Bananas are nature's energy bar! They're packed with potassium which helps prevent muscle cramps - essential for runners.',
+                'why': 'Natural sweetness from bananas means less added sugar. High in potassium for muscle recovery. Freezes well for weekly meal prep!'
+            },
+            5: {
+                'name': 'Energy Balls (No-Bake)',
+                'url': 'https://www.bbcgoodfood.com/recipes/energy-balls',
+                'source': 'BBC Good Food',
+                'fact': 'Dates, a key ingredient in energy balls, were used by ancient Olympic athletes as a natural performance enhancer!',
+                'why': 'No baking required! Packed with dates, nuts, and oats. Perfect pre-run fuel or post-workout recovery snack.'
+            },
+            6: {
+                'name': 'Swedish Apple Cake (Äppelkaka)',
+                'url': 'https://www.bbcgoodfood.com/recipes/swedish-apple-cake',
+                'source': 'BBC Good Food',
+                'fact': 'Apples float in water because they're 25% air! They're also packed with quercetin, an antioxidant that may improve endurance.',
+                'why': 'Light and fruity! Apples add natural sweetness and fiber. Much lower in sugar than traditional cakes.'
+            },
+            7: {
+                'name': 'Flapjacks',
+                'url': 'https://www.bbcgoodfood.com/recipes/flapjacks',
+                'source': 'BBC Good Food',
+                'fact': 'Flapjacks were invented in the 16th century and became popular with British sailors for their long shelf life!',
+                'why': 'Oats provide complex carbs for sustained energy. Easy to customize with dried fruit or dark chocolate. Great running fuel!'
+            },
+            8: {
+                'name': 'Carrot Cake Muffins',
+                'url': 'https://www.bbcgoodfood.com/recipes/carrot-cake-muffins',
+                'source': 'BBC Good Food',
+                'fact': 'Carrots were used in sweet cakes during WWII when sugar was rationed in Britain!',
+                'why': 'Vegetables in a cake! Carrots add natural sweetness, moisture, and beta-carotene. Portion-controlled muffin size.'
+            },
+            9: {
+                'name': 'Swedish Ginger Thins (Pepparkakor)',
+                'url': 'https://www.bbcgoodfood.com/recipes/swedish-ginger-thins',
+                'source': 'BBC Good Food',
+                'fact': 'Ginger has anti-inflammatory properties that can help reduce muscle soreness after hard training sessions!',
+                'why': 'Crisp and spiced! Ginger aids digestion and reduces inflammation. Lower calorie than most cookies.'
+            },
+            10: {
+                'name': 'Blueberry Muffins',
+                'url': 'https://www.bbcgoodfood.com/recipes/blueberry-muffins',
+                'source': 'BBC Good Food',
+                'fact': 'Blueberries are called "superfood" for runners - they're packed with antioxidants that speed up muscle recovery!',
+                'why': 'Blueberries are high in antioxidants for recovery. Make a batch and freeze for quick breakfast options.'
+            },
+        }
+        
+        # Cycle through fikas, repeating after week 10
+        fika_index = ((week_num - 1) % 10) + 1
+        return fikas.get(fika_index, fikas[1])
+    
     def generate_html_report(self, current_week_of_plan=1, output_file='training_report.html'):
         """Generate complete HTML report"""
         running = self.get_running_data()
@@ -214,6 +293,9 @@ class HTMLTrainingAnalyzer:
             phase_focus = "Maintain intensity, reduce volume"
         
         # Get chart data
+        
+        # Get fika of the week
+        fika = self._get_fika_of_week(current_week_of_plan)
         chart_data = self._get_chart_data()
         
         # Generate HTML
@@ -494,6 +576,68 @@ class HTMLTrainingAnalyzer:
             }}
         }}
         
+        
+        .fika-section {
+            background: linear-gradient(135deg, #f5f5dc 0%, #fff8dc 100%);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 3px solid #d4a574;
+        }
+        
+        .fika-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .fika-name {
+            color: #8b4513;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .fika-source {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+        
+        .fika-source a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .fika-source a:hover {
+            text-decoration: underline;
+        }
+        
+        .fika-fact {
+            background: #fff8e1;
+            padding: 15px;
+            border-left: 4px solid #ffd700;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .fika-why {
+            background: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .fika-tagline {
+            text-align: center;
+            font-size: 1.1em;
+            color: #8b4513;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
         @media (max-width: 768px) {{
             .stats-grid {{
                 grid-template-columns: 1fr;
@@ -660,6 +804,25 @@ class HTMLTrainingAnalyzer:
             <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             <p>Österlen Spring Trail 60km Training Analysis • Week {current_week_of_plan} of 22</p>
         </div>
+            
+            <!-- Fika of the Week -->
+            <div class="section fika-section">
+                <h2 class="section-title">☕ FIKA OF THE WEEK 🥐</h2>
+                <div class="fika-card">
+                    <h3 class="fika-name">{fika['name']}</h3>
+                    <p class="fika-source">
+                        <strong>Recipe:</strong> 
+                        <a href="{fika['url']}" target="_blank" rel="noopener">{fika['source']}</a>
+                    </p>
+                    <div class="fika-fact">
+                        <strong>🍪 Fun Fact:</strong> {fika['fact']}
+                    </div>
+                    <div class="fika-why">
+                        <strong>💪 Why This Fika:</strong> {fika['why']}
+                    </div>
+                    <p class="fika-tagline"><em>You've earned this treat - enjoy your fika! ☕</em></p>
+                </div>
+            </div>
     </div>
     
     <script>
